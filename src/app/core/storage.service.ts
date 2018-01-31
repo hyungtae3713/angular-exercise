@@ -5,25 +5,37 @@ import { Injectable } from '@angular/core';
 export class StorageService {
     storage = window.localStorage;
 
-    has(name: string): boolean {
-        return this.get(name) !== null;
+    clear(): void {
+        this.storage.clear();
     }
 
-    get(name: string): any {
-        const item = this.storage.getItem(name);
-
-        try {
-            return JSON.parse(item);
-        } catch (err) {
-            return null;
-        }
+    find(id: string): any {
+        if(!id) 
+            return;
+        return this.storage.getItem(id);
     }
 
-    set(name: string, value: any) {
-        this.storage.setItem(name, JSON.stringify(value));
+    gets(): any[] {
+        const values = [];
+        const keys = Object.keys(this.storage);
+        let i = keys.length;
+
+        while(i--)
+            values.push(this.storage.getItem(keys[i]));
+
+        return values;
     }
 
-    remove(name: string) {
-        this.storage.removeItem(name);
+    has(id: string): boolean {
+        return this.find(id) !== null;
+    }
+
+    remove(id: string): void {
+        this.storage.removeItem(id);
+    }
+
+    set(id: string, value: any): void {
+        // TODO: 현재 value가 object일 경우만 처리되어 있어서 그 외 경우에 대한 처리 필요(htkim, 180131)
+        this.storage.setItem(id, JSON.stringify(value));
     }
 }

@@ -1,9 +1,28 @@
 <section class="TodoListRx">
-    <div class="TodoListRx__creation">
-        <input id="addTodo" type="text" />
-        <button class="TodoListRx__createNewTodoButton">만들기</button>
-    </div>
-
-    <ul class="TodoListRx__list">
-    </ul>
+    <form [formGroup]="form" novalidate>
+        <div class="TodoListRx__creation">
+            <input id="addTodo" type="text" formControlName="title" />
+            <button type="button" 
+                class="btn btn-default"
+                [disabled]="form.invalid"
+                (click)="addTodo()">만들기
+            </button>
+            <span class="pull-right">
+                <div class="checkbox">
+                    <label class="center-block" [ngClass]="{ 'line-though': completed }">
+                        <input type="checkbox" formControlName="completedOnly"> 완료항목만
+                    </label>
+                </div>
+                <button class="btn btn-danger btn-xs" (click)="removeAllCompletedTodo()">완료항목 일괄삭제</button>
+            </span>
+        </div>
+    </form>
+    <todo-item
+        *ngFor="let todo of todos$ | async; let i=index" 
+        [todo]="todo" 
+        [index]="i"
+        (onUpdateTodo)="updateTodo($event)"
+        (onRemoveTodo)="removeTodoAt($event)">
+    </todo-item>
 </section>
+    

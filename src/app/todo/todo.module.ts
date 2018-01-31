@@ -7,19 +7,16 @@ import { TodoListComponent } from './todo-list/todo-list.component';
 import { TodoListRxComponent } from './todo-list-rx/todo-list-rx.component';
 import { TodoStoreRxService } from './todo-store-rx.service';
 import { TodoStoreService } from './todo-store.service';
-import { FormsModule } from '@angular/forms';
-
 
 @NgModule({
     imports: [
         CommonModule,
-        FormsModule,
         CoreModule
     ],
     declarations: [
         TodoItemComponent,
         TodoListComponent,
-        TodoListRxComponent,
+        TodoListRxComponent
     ],
     providers: [
         TodoStoreService,

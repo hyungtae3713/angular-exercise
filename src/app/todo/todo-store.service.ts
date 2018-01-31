@@ -1,40 +1,56 @@
 import { Injectable } from '@angular/core';
-import { Todo } from './todo';
+
 import { StorageService } from '../core/storage.service';
-
-
-// Get todos from storage by item name.
-const STORAGE_ITEM_NAME = 'ANGULAR_EXERCISE_TODO_STORAGE';
-
+import { Todo } from './todo';
 
 @Injectable()
 export class TodoStoreService {
-    private _todos: Todo[] = [];
+    constructor(private storageService: StorageService) { }
 
-    constructor(private storageService: StorageService) {
+    add(todo: Todo): Todo {
+        const id = `${new Date().getTime()}-${todo.title}`;
+        const data = { id, ...todo };
+        this.storageService.set(id, data);
+        return data as Todo;
     }
 
-    get todos(): Todo[] {
+    find(id: string): Todo {
+        let data = this.storageService.find(id);
+        
+        if(!data)
+            return null;
+
+        data = JSON.parse(data);
+
+        if(typeof data === 'object')
+            return  data as Todo;
+        return null;
     }
 
-    get remainTodos(): Todo[] {
+    gets(): Todo[] {
+        const dataBundle = this.storageService.gets();
+        const todos: Todo[] = dataBundle
+            .map((data) => {
+                if(!data)
+                    return;
+                return data = JSON.parse(data);
+            })
+            .filter((data) => {
+                if(typeof data === 'object')
+                    return  data as Todo;
+            });
+        return todos;
     }
 
-    get completedTodos(): Todo[] {
+    remove(id: string): string|number {
+        this.storageService.remove(id);
+        return (this.storageService.has(id) ? -1 : id);
     }
 
-    getAllTodosFromStorage() {
-    }
-
-    add(title: string) {
-    }
-
-    remove(todo: Todo) {
-    }
-
-    toggleCompletion(todo: Todo) {
-    }
-
-    private updateStorage() {
+    update(todo: Todo): string|number {
+        if(!this.storageService.has(todo.id))
+            return -1;
+        this.storageService.set(todo.id, todo);
+        return todo.id;
     }
 }
